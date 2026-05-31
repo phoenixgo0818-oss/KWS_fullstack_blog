@@ -13,6 +13,9 @@ const ArticlePage = () => {
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState(null);
   const [upvoting, setUpvoting] = useState(false);
+  const [author, setAuthor] = useState('');
+  const [commentText, setCommentText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -49,9 +52,33 @@ const ArticlePage = () => {
     }
   };
 
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    setSubmitting(true);
+    try {
+      const updated = await api.addComment(articleId, {
+        author: author.trim() || 'Guest',
+        text: commentText,
+      });
+      setArticle(updated);
+      setArticles((prev) =>
+        prev.map((a) => (a.slug === updated.slug ? updated : a))
+      );
+      setCommentText('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) return <p>Loading article…</p>;
   if (notFound) return <NotFoundPage />;
   if (error) return <p>Could not load article: {error}</p>;
+
+  const comments = article.comments ?? [];
 
   return (
     <div className="article-layout">
@@ -77,6 +104,56 @@ const ArticlePage = () => {
         {article.content.map((paragraph, i) => (
           <p key={i}>{paragraph}</p>
         ))}
+
+        <section className="article-comments">
+          <h2 className="article-comments__heading">
+            Comments ({comments.length})
+          </h2>
+
+          <form className="article-comments__form" onSubmit={handleCommentSubmit}>
+            <input
+              type="text"
+              className="article-comments__input"
+              placeholder="Your name (optional)"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              maxLength={50}
+            />
+            <textarea
+              className="article-comments__textarea"
+              placeholder="Write a comment…"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              rows={3}
+              required
+            />
+            <button
+              type="submit"
+              className="article-comments__submit"
+              disabled={submitting || !commentText.trim()}
+            >
+              {submitting ? 'Posting…' : 'Post comment'}
+            </button>
+          </form>
+
+          {comments.length === 0 ? (
+            <p className="article-comments__empty">No comments yet.</p>
+          ) : (
+            <ul className="article-comments__list">
+              {comments.map((comment) => (
+                <li key={comment.id} className="article-comments__item">
+                  <p className="article-comments__meta">
+                    <strong>{comment.author}</strong>
+                    <span>
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </span>
+                  </p>
+                  <p className="article-comments__text">{comment.text}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </main>
     </div>
   );

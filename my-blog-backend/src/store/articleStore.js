@@ -1,6 +1,10 @@
 const seedArticles = require('../data/seedArticles');
 
-let articles = seedArticles.map((a) => ({ ...a, upvotes: a.upvotes ?? 0 }));
+let articles = seedArticles.map((a) => ({
+  ...a,
+  upvotes: a.upvotes ?? 0,
+  comments: a.comments ?? [],
+}));
 
 function slugify(title) {
   return title
@@ -44,6 +48,7 @@ function create({ title, body, author = 'Guest' }) {
     createdAt: new Date().toISOString(),
     content: content.length > 0 ? content : ['(No content yet.)'],
     upvotes: 0,
+    comments: [],
   };
 
   articles = [article, ...articles];
@@ -57,8 +62,28 @@ function upvote(slug) {
   return articles[index];
 }
 
+function addComment(slug, { author = 'Guest', text }) {
+  const index = articles.findIndex((a) => a.slug === slug);
+  if (index === -1) return null;
+
+  const comment = {
+    id: `comment-${Date.now()}`,
+    author: (author || 'Guest').trim() || 'Guest',
+    text: text.trim(),
+    createdAt: new Date().toISOString(),
+  };
+
+  const comments = [...articles[index].comments, comment];
+  articles[index] = { ...articles[index], comments };
+  return articles[index];
+}
+
 function reset() {
-  articles = seedArticles.map((a) => ({ ...a, upvotes: a.upvotes ?? 0 }));
+  articles = seedArticles.map((a) => ({
+    ...a,
+    upvotes: a.upvotes ?? 0,
+    comments: a.comments ?? [],
+  }));
   return getAll();
 }
 
@@ -67,5 +92,6 @@ module.exports = {
   getBySlug,
   create,
   upvote,
+  addComment,
   reset,
 };

@@ -30,7 +30,31 @@
   transition: color 0.15s ease;
 }
 
+.articles-list__counts {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.articles-list__upvotes::before {
+  content: '👍';
+  margin-right: 0.15rem;
+}
+
+.articles-list__comments::before {
+  content: '💬';
+  margin-right: 0.15rem;
+}
+
 .articles-list__upvotes {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-subtle);
+}
+
+.articles-list__comments {
   flex-shrink: 0;
   font-size: 0.75rem;
   font-weight: 600;

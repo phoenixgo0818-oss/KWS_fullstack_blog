@@ -19,7 +19,12 @@ const ArticlesList = ({ articles, activeArticleId, showHeading = false }) => {
                 }
               >
                 {article.title}
-                <span className="articles-list__upvotes">{article.upvotes ?? 0}</span>
+                <span className="articles-list__counts">
+                  <span className="articles-list__upvotes">{article.upvotes ?? 0}</span>
+                  <span className="articles-list__comments">
+                    {(article.comments ?? []).length}
+                  </span>
+                </span>
               </Link>
             </li>
           );

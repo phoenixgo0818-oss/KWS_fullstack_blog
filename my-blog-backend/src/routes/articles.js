@@ -15,6 +15,20 @@ router.post('/:slug/upvote', (req, res) => {
   res.json(article);
 });
 
+router.post('/:slug/comments', (req, res) => {
+  const { text, author } = req.body;
+
+  if (!text || typeof text !== 'string' || !text.trim()) {
+    return res.status(400).json({ error: 'Comment text is required' });
+  }
+
+  const article = articleStore.addComment(req.params.slug, { text, author });
+  if (!article) {
+    return res.status(404).json({ error: 'Article not found' });
+  }
+  res.status(201).json(article);
+});
+
 router.get('/:slug', (req, res) => {
   const article = articleStore.getBySlug(req.params.slug);
   if (!article) {
