@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+
+# environment (secrets — use .env.example as the template)
+.env
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
