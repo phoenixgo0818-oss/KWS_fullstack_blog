@@ -14,14 +14,18 @@
 }
 
 .article-upvote__btn {
-  padding: 0.35rem 0.75rem;
+  box-sizing: border-box;
+  width: 3.35rem;
+  padding: 0.35rem 0;
   font-size: 0.875rem;
+  line-height: 1.25;
   font-weight: 500;
   color: var(--color-text);
   background: var(--color-surface, #fff);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
+  text-align: center;
 }
 
 .article-upvote__btn:hover:not(:disabled) {

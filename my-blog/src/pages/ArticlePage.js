@@ -66,8 +66,9 @@ const ArticlePage = () => {
             className="article-upvote__btn"
             onClick={handleUpvote}
             disabled={upvoting}
+            aria-label="Upvote"
           >
-            {upvoting ? 'Upvoting…' : 'Upvote'}
+            👍
           </button>
           <span className="article-upvote__count">
             {article.upvotes} {article.upvotes === 1 ? 'upvote' : 'upvotes'}
