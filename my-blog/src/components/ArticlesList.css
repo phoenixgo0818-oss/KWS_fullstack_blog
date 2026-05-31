@@ -18,13 +18,23 @@
 }
 
 .articles-list__link {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
   font-size: 0.9375rem;
   font-weight: 500;
   line-height: 1.35;
   color: var(--color-text-muted);
   text-decoration: none;
   transition: color 0.15s ease;
+}
+
+.articles-list__upvotes {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-subtle);
 }
 
 .articles-list__link:hover {

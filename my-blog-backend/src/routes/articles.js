@@ -7,6 +7,14 @@ router.get('/', (req, res) => {
   res.json(articleStore.getAll());
 });
 
+router.post('/:slug/upvote', (req, res) => {
+  const article = articleStore.upvote(req.params.slug);
+  if (!article) {
+    return res.status(404).json({ error: 'Article not found' });
+  }
+  res.json(article);
+});
+
 router.get('/:slug', (req, res) => {
   const article = articleStore.getBySlug(req.params.slug);
   if (!article) {

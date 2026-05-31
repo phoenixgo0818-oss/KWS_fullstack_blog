@@ -1,6 +1,6 @@
 const seedArticles = require('../data/seedArticles');
 
-let articles = [...seedArticles];
+let articles = seedArticles.map((a) => ({ ...a, upvotes: a.upvotes ?? 0 }));
 
 function slugify(title) {
   return title
@@ -43,14 +43,22 @@ function create({ title, body, author = 'Guest' }) {
     author,
     createdAt: new Date().toISOString(),
     content: content.length > 0 ? content : ['(No content yet.)'],
+    upvotes: 0,
   };
 
   articles = [article, ...articles];
   return article;
 }
 
+function upvote(slug) {
+  const index = articles.findIndex((a) => a.slug === slug);
+  if (index === -1) return null;
+  articles[index] = { ...articles[index], upvotes: articles[index].upvotes + 1 };
+  return articles[index];
+}
+
 function reset() {
-  articles = [...seedArticles];
+  articles = seedArticles.map((a) => ({ ...a, upvotes: a.upvotes ?? 0 }));
   return getAll();
 }
 
@@ -58,5 +66,6 @@ module.exports = {
   getAll,
   getBySlug,
   create,
+  upvote,
   reset,
 };
