@@ -6,7 +6,7 @@ import * as api from '../services/api';
 import './ArticlePage.css';
 
 const ArticlePage = () => {
-  const { articleId } = useParams();
+  const { slug } = useParams();
   const [articles, setArticles] = useState([]);
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ const ArticlePage = () => {
     setNotFound(false);
     setError(null);
 
-    Promise.all([api.getArticles(), api.getArticle(articleId)])
+    Promise.all([api.getArticles(), api.getArticle(slug)])
       .then(([all, one]) => {
         setArticles(all);
         setArticle(one);
@@ -35,12 +35,12 @@ const ArticlePage = () => {
         }
       })
       .finally(() => setLoading(false));
-  }, [articleId]);
+  }, [slug]);
 
   const handleUpvote = async () => {
     setUpvoting(true);
     try {
-      const updated = await api.upvoteArticle(articleId);
+      const updated = await api.upvoteArticle(slug);
       setArticle(updated);
       setArticles((prev) =>
         prev.map((a) => (a.slug === updated.slug ? updated : a))
@@ -58,7 +58,7 @@ const ArticlePage = () => {
 
     setSubmitting(true);
     try {
-      const updated = await api.addComment(articleId, {
+      const updated = await api.addComment(slug, {
         author: author.trim() || 'Guest',
         text: commentText,
       });
@@ -83,7 +83,7 @@ const ArticlePage = () => {
   return (
     <div className="article-layout">
       <aside className="article-layout__sidebar">
-        <ArticlesList articles={articles} activeArticleId={articleId} />
+        <ArticlesList articles={articles} activeSlug={slug} />
       </aside>
       <main className="article-layout__main">
         <h1>{article.title}</h1>

@@ -78,20 +78,10 @@ function addComment(slug, { author = 'Guest', text }) {
   return articles[index];
 }
 
-function reset() {
-  articles = seedArticles.map((a) => ({
-    ...a,
-    upvotes: a.upvotes ?? 0,
-    comments: a.comments ?? [],
-  }));
-  return getAll();
-}
-
 module.exports = {
   getAll,
   getBySlug,
   create,
   upvote,
   addComment,
-  reset,
 };
