@@ -1,10 +1,35 @@
 const seedArticles = require('../data/seedArticles');
+const Article = require('../models/Article');
 
 let articles = seedArticles.map((a) => ({
   ...a,
   upvotes: a.upvotes ?? 0,
   comments: a.comments ?? [],
 }));
+
+function toApiDate(value) {
+  return value instanceof Date ? value.toISOString() : value;
+}
+
+function toApiArticle(doc) {
+  if (!doc) return null;
+
+  return {
+    id: doc.id,
+    slug: doc.slug,
+    title: doc.title,
+    author: doc.author,
+    createdAt: toApiDate(doc.createdAt),
+    content: doc.content,
+    upvotes: doc.upvotes ?? 0,
+    comments: (doc.comments ?? []).map((comment) => ({
+      id: comment.id,
+      author: comment.author,
+      text: comment.text,
+      createdAt: toApiDate(comment.createdAt),
+    })),
+  };
+}
 
 function slugify(title) {
   return title
@@ -24,12 +49,14 @@ function uniqueSlug(baseSlug) {
   return slug;
 }
 
-function getAll() {
-  return [...articles];
+async function getAll() {
+  const docs = await Article.find().sort({ createdAt: 1 }).lean();
+  return docs.map(toApiArticle);
 }
 
-function getBySlug(slug) {
-  return articles.find((a) => a.slug === slug);
+async function getBySlug(slug) {
+  const doc = await Article.findOne({ slug }).lean();
+  return toApiArticle(doc);
 }
 
 function create({ title, body, author = 'Guest' }) {

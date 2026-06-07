@@ -1,4 +1,4 @@
-/** Seed posts — same shape as the React app; replace with MongoDB later. */
+/** Seed posts — same shape as the React app; loaded into MongoDB via npm run seed. */
 const seedArticles = [
   {
     id: 'learn-react',
