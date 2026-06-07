@@ -5,6 +5,8 @@ const connectDB = require('../db/connect');
 const Article = require('../models/Article');
 const seedArticles = require('../data/seedArticles');
 
+const reset = process.argv.includes('--reset');
+
 function toDocuments() {
   return seedArticles.map((article) => ({
     id: article.id || article.slug,
@@ -21,10 +23,16 @@ function toDocuments() {
 async function seed() {
   await connectDB();
 
-  const existing = await Article.countDocuments();
-  if (existing > 0) {
-    console.log(`Already seeded (${existing} articles). Skipping.`);
-    return;
+  if (reset) {
+    const { deletedCount } = await Article.deleteMany({});
+    console.log(`Reset: cleared ${deletedCount} articles.`);
+  } else {
+    const existing = await Article.countDocuments();
+    if (existing > 0) {
+      console.log(`Already seeded (${existing} articles). Skipping.`);
+      console.log('To re-seed from scratch, run: npm run seed:reset');
+      return;
+    }
   }
 
   const docs = toDocuments();
