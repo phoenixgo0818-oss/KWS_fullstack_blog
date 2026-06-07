@@ -1,11 +1,4 @@
-const seedArticles = require('../data/seedArticles');
 const Article = require('../models/Article');
-
-let articles = seedArticles.map((a) => ({
-  ...a,
-  upvotes: a.upvotes ?? 0,
-  comments: a.comments ?? [],
-}));
 
 function toApiDate(value) {
   return value instanceof Date ? value.toISOString() : value;
@@ -39,10 +32,10 @@ function slugify(title) {
     .replace(/^-|-$/g, '');
 }
 
-function uniqueSlug(baseSlug) {
+async function uniqueSlug(baseSlug) {
   let slug = baseSlug;
   let n = 1;
-  while (articles.some((a) => a.slug === slug)) {
+  while (await Article.exists({ slug })) {
     slug = `${baseSlug}-${n}`;
     n += 1;
   }
@@ -59,50 +52,52 @@ async function getBySlug(slug) {
   return toApiArticle(doc);
 }
 
-function create({ title, body, author = 'Guest' }) {
+async function create({ title, body, author = 'Guest' }) {
   const baseSlug = slugify(title) || `post-${Date.now()}`;
-  const slug = uniqueSlug(baseSlug);
+  const slug = await uniqueSlug(baseSlug);
   const content = body
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean);
 
-  const article = {
+  const doc = await Article.create({
     id: slug,
     slug,
     title: title.trim(),
     author,
-    createdAt: new Date().toISOString(),
     content: content.length > 0 ? content : ['(No content yet.)'],
     upvotes: 0,
     comments: [],
-  };
+  });
 
-  articles = [article, ...articles];
-  return article;
+  return toApiArticle(doc.toObject());
 }
 
-function upvote(slug) {
-  const index = articles.findIndex((a) => a.slug === slug);
-  if (index === -1) return null;
-  articles[index] = { ...articles[index], upvotes: articles[index].upvotes + 1 };
-  return articles[index];
+async function upvote(slug) {
+  const doc = await Article.findOneAndUpdate(
+    { slug },
+    { $inc: { upvotes: 1 } },
+    { returnDocument: 'after' }
+  ).lean();
+
+  return toApiArticle(doc);
 }
 
-function addComment(slug, { author = 'Guest', text }) {
-  const index = articles.findIndex((a) => a.slug === slug);
-  if (index === -1) return null;
-
+async function addComment(slug, { author = 'Guest', text }) {
   const comment = {
     id: `comment-${Date.now()}`,
     author: (author || 'Guest').trim() || 'Guest',
     text: text.trim(),
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
   };
 
-  const comments = [...articles[index].comments, comment];
-  articles[index] = { ...articles[index], comments };
-  return articles[index];
+  const doc = await Article.findOneAndUpdate(
+    { slug },
+    { $push: { comments: comment } },
+    { returnDocument: 'after' }
+  ).lean();
+
+  return toApiArticle(doc);
 }
 
 module.exports = {
