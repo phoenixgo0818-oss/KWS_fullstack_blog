@@ -33,3 +33,10 @@ export function addComment(slug, { author, text }) {
     body: JSON.stringify({ author, text }),
   });
 }
+
+export function createArticle({ title, body, author }) {
+  return request('/api/articles', {
+    method: 'POST',
+    body: JSON.stringify({ title, body, author }),
+  });
+}
