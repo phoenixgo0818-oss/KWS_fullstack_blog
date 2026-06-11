@@ -1,21 +1,10 @@
-import { useEffect, useState } from 'react';
 import ArticlesList from '../components/ArticlesList';
 import LoadingMessage from '../components/LoadingMessage';
 import ErrorMessage from '../components/ErrorMessage';
-import * as api from '../services/api';
+import { useArticles } from '../hooks/useArticles';
 
 const ArticleListPage = () => {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    api
-      .getArticles()
-      .then(setArticles)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const { articles, loading, error } = useArticles();
 
   if (loading) return <LoadingMessage message="Loading articles…" />;
   if (error) {

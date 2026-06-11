@@ -1,6 +1,7 @@
 import './App.css';
 import NavBar from './NavBar';
 import ErrorBoundary from './components/ErrorBoundary';
+import { ArticlesProvider } from './hooks/useArticles';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import ArticlePage from './pages/ArticlePage';
@@ -12,6 +13,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 function App() {
   return (
     <Router>
+    <ArticlesProvider>
     <div className="App">
       <NavBar />
       <header className="app-hero">
@@ -31,6 +33,7 @@ function App() {
         </ErrorBoundary>
       </div>
     </div>
+    </ArticlesProvider>
     </Router>
   );
 }

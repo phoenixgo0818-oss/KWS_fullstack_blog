@@ -4,6 +4,7 @@ import ArticlesList from '../components/ArticlesList';
 import LoadingMessage from '../components/LoadingMessage';
 import ErrorMessage from '../components/ErrorMessage';
 import NotFoundPage from './NotFoundPage';
+import { useArticles } from '../hooks/useArticles';
 import * as api from '../services/api';
 import { formatDate } from '../utils/formatDate';
 import './ArticlePage.css';
@@ -12,34 +13,45 @@ const ArticlePage = () => {
   const { slug } = useParams();
   const location = useLocation();
   const justPublished = location.state?.justPublished === true;
-  const [articles, setArticles] = useState([]);
+  const {
+    articles,
+    loading: listLoading,
+    error: listError,
+    updateArticle,
+    refetch,
+  } = useArticles();
+
   const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [articleLoading, setArticleLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [error, setError] = useState(null);
+  const [articleError, setArticleError] = useState(null);
   const [upvoting, setUpvoting] = useState(false);
   const [author, setAuthor] = useState('');
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    setNotFound(false);
-    setError(null);
+    if (justPublished) {
+      refetch();
+    }
+  }, [justPublished, refetch]);
 
-    Promise.all([api.getArticles(), api.getArticle(slug)])
-      .then(([all, one]) => {
-        setArticles(all);
-        setArticle(one);
-      })
+  useEffect(() => {
+    setArticleLoading(true);
+    setNotFound(false);
+    setArticleError(null);
+
+    api
+      .getArticle(slug)
+      .then(setArticle)
       .catch((err) => {
         if (err.message === 'Article not found') {
           setNotFound(true);
         } else {
-          setError(err.message);
+          setArticleError(err.message);
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => setArticleLoading(false));
   }, [slug]);
 
   const handleUpvote = async () => {
@@ -47,11 +59,9 @@ const ArticlePage = () => {
     try {
       const updated = await api.upvoteArticle(slug);
       setArticle(updated);
-      setArticles((prev) =>
-        prev.map((a) => (a.slug === updated.slug ? updated : a))
-      );
+      updateArticle(updated);
     } catch (err) {
-      setError(err.message);
+      setArticleError(err.message);
     } finally {
       setUpvoting(false);
     }
@@ -68,16 +78,17 @@ const ArticlePage = () => {
         text: commentText,
       });
       setArticle(updated);
-      setArticles((prev) =>
-        prev.map((a) => (a.slug === updated.slug ? updated : a))
-      );
+      updateArticle(updated);
       setCommentText('');
     } catch (err) {
-      setError(err.message);
+      setArticleError(err.message);
     } finally {
       setSubmitting(false);
     }
   };
+
+  const loading = listLoading || articleLoading;
+  const error = listError || articleError;
 
   if (loading) return <LoadingMessage message="Loading article…" />;
   if (notFound) return <NotFoundPage />;

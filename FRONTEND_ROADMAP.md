@@ -136,10 +136,10 @@ The same pattern appears in `ArticleListPage`, `ArticlePage`, and `WriteArticleP
 useState → useEffect or handler → api call → loading / error / success
 ```
 
-- [ ] Create `my-blog/src/hooks/useArticles.js` — fetch all articles, return `{ articles, loading, error, refetch }`
-- [ ] Create `my-blog/src/components/LoadingMessage.js` — shared loading UI
-- [ ] Create `my-blog/src/components/ErrorMessage.js` — shared error UI
-- [ ] Refactor `ArticleListPage` and `ArticlePage` to use `useArticles`
+- [x] Create `my-blog/src/hooks/useArticles.js` — fetch all articles, return `{ articles, loading, error, refetch }`
+- [x] Create `my-blog/src/components/LoadingMessage.js` — shared loading UI
+- [x] Create `my-blog/src/components/ErrorMessage.js` — shared error UI
+- [x] Refactor `ArticleListPage` and `ArticlePage` to use `useArticles`
 
 **Why before auth:** Auth adds login state, protected routes, and token headers — cleaner structure makes that much easier.
 
@@ -154,7 +154,7 @@ Promise.all([api.getArticles(), api.getArticle(slug)])
 ```
 
 - [ ] **Option A (simple):** Keep as-is — sidebar needs the full list anyway; document the tradeoff
-- [ ] **Option B (better):** Use `useArticles()` hook cached at layout level so the list is fetched once, not on every article click
+- [x] **Option B (better):** Use `useArticles()` hook cached at layout level so the list is fetched once, not on every article click
 - [ ] **Option C (later):** Backend endpoint like `GET /api/articles/:slug` with optional sidebar data — only if you outgrow the simple approach
 
 **Files to touch:**
@@ -377,7 +377,7 @@ Progress tracker:
 - [x] Step 1 — Metadata
 - [x] Step 2 — Empty and loading states
 - [x] Step 3 — NavLink + sliding frosted-glass hover/active indicator
-- [ ] Step 4 — Hooks and shared UI
+- [x] Step 4 — Hooks and shared UI
 - [ ] Step 5 — Home recent articles / search / sort
 - [ ] Step 6 — Auth
 
