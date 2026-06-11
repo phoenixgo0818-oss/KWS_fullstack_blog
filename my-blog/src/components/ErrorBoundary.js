@@ -1,3 +1,8 @@
+/**
+ * ErrorBoundary — catches render errors in child components.
+ * Must be a class component (React has no hook equivalent yet).
+ * Wrap <Routes> in App.js so one broken page does not crash the whole app.
+ */
 import { Component } from 'react';
 import './ErrorBoundary.css';
 
@@ -7,6 +12,7 @@ class ErrorBoundary extends Component {
     this.state = { hasError: false };
   }
 
+  /** React calls this when a child throws during render. */
   static getDerivedStateFromError() {
     return { hasError: true };
   }

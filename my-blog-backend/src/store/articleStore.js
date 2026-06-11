@@ -1,9 +1,15 @@
+/**
+ * Article store — MongoDB operations for articles (no HTTP here).
+ * Maps Mongoose documents to the JSON shape the React app expects.
+ */
 const Article = require('../models/Article');
 
+/** Ensure dates are ISO strings in API responses. */
 function toApiDate(value) {
   return value instanceof Date ? value.toISOString() : value;
 }
 
+/** Convert a lean Mongoose doc to the public API article object. */
 function toApiArticle(doc) {
   if (!doc) return null;
 
@@ -24,6 +30,7 @@ function toApiArticle(doc) {
   };
 }
 
+/** Turn a title into a URL slug (lowercase, hyphens, no special chars). */
 function slugify(title) {
   return title
     .toLowerCase()
@@ -32,6 +39,7 @@ function slugify(title) {
     .replace(/^-|-$/g, '');
 }
 
+/** Append -1, -2, … if slug already exists in the database. */
 async function uniqueSlug(baseSlug) {
   let slug = baseSlug;
   let n = 1;
@@ -52,6 +60,10 @@ async function getBySlug(slug) {
   return toApiArticle(doc);
 }
 
+/**
+ * Create article from title + body string.
+ * Body paragraphs: split on blank lines (\n\n).
+ */
 async function create({ title, body, author = 'Guest' }) {
   const baseSlug = slugify(title) || `post-${Date.now()}`;
   const slug = await uniqueSlug(baseSlug);

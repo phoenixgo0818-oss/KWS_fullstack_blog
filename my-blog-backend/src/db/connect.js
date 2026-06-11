@@ -1,5 +1,12 @@
+/**
+ * MongoDB connection — reads MONGODB_URI from .env and connects via Mongoose.
+ */
 const mongoose = require('mongoose');
 
+/**
+ * Connect to MongoDB. Throws if MONGODB_URI is missing or connection fails.
+ * @returns {Promise<void>}
+ */
 async function connectDB() {
   const uri = process.env.MONGODB_URI;
 

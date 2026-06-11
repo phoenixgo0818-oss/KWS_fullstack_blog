@@ -6,6 +6,8 @@ A step-by-step guide for improving the **my-blog** React frontend before adding 
 **Frontend app:** `my-blog/`  
 **Backend API:** `my-blog-backend/` (runs on `http://localhost:8000`)
 
+**Commenting:** After each step, add file headers and JSDoc per [COMMENTING_GUIDE.md](COMMENTING_GUIDE.md).
+
 ---
 
 ## Tutor Principle

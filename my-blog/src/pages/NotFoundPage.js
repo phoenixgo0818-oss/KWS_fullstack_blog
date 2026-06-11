@@ -1,3 +1,6 @@
+/**
+ * NotFoundPage — 404 UI. Route: * (catch-all) and reused when article slug missing.
+ */
 import { Link } from 'react-router-dom';
 import './StaticPage.css';
 

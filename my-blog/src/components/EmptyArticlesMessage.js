@@ -1,3 +1,7 @@
+/**
+ * EmptyArticlesMessage — shown when the article list is empty.
+ * Links to /write so the user can create the first post.
+ */
 import { Link } from 'react-router-dom';
 import './EmptyArticlesMessage.css';
 

@@ -1,8 +1,13 @@
+/**
+ * Article routes — REST API under /api/articles.
+ * Delegates persistence to articleStore (MongoDB).
+ */
 const express = require('express');
 const articleStore = require('../store/articleStore');
 
 const router = express.Router();
 
+/** GET /api/articles — list all articles (oldest first). */
 router.get('/', async (req, res, next) => {
   try {
     const articles = await articleStore.getAll();
@@ -12,6 +17,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+/** POST /api/articles/:slug/upvote — increment upvotes by 1. */
 router.post('/:slug/upvote', async (req, res, next) => {
   try {
     const article = await articleStore.upvote(req.params.slug);
@@ -24,6 +30,7 @@ router.post('/:slug/upvote', async (req, res, next) => {
   }
 });
 
+/** POST /api/articles/:slug/comments — body: { text, author? }. */
 router.post('/:slug/comments', async (req, res, next) => {
   try {
     const { text, author } = req.body;
@@ -42,6 +49,7 @@ router.post('/:slug/comments', async (req, res, next) => {
   }
 });
 
+/** GET /api/articles/:slug — single article by slug. */
 router.get('/:slug', async (req, res, next) => {
   try {
     const article = await articleStore.getBySlug(req.params.slug);
@@ -54,6 +62,10 @@ router.get('/:slug', async (req, res, next) => {
   }
 });
 
+/**
+ * POST /api/articles — create article.
+ * Body: { title, body, author? } — body is split into content[] paragraphs.
+ */
 router.post('/', async (req, res, next) => {
   try {
     const { title, body, author } = req.body;

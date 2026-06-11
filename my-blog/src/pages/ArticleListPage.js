@@ -1,3 +1,7 @@
+/**
+ * ArticleListPage — all articles. Route: /articles-list
+ * Reads shared list from useArticles(); no local fetch logic.
+ */
 import ArticlesList from '../components/ArticlesList';
 import LoadingMessage from '../components/LoadingMessage';
 import ErrorMessage from '../components/ErrorMessage';

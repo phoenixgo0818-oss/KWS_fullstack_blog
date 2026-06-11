@@ -1,3 +1,7 @@
+/**
+ * Main navigation — NavLink items with sliding frosted-glass active indicator
+ * and hover highlight. Login placeholder reserved for future auth.
+ */
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import './NavBar.css';
@@ -8,12 +12,14 @@ const NAV_ITEMS = [
   {
     to: '/articles-list',
     label: 'Articles',
+    // Keep "Articles" highlighted when viewing a single article page
     isActive: ({ pathname }) =>
       pathname === '/articles-list' || pathname.startsWith('/article/'),
   },
   { to: '/write', label: 'Write' },
 ];
 
+/** Hidden pill style — used before measurement or when no link is active */
 const HIDDEN_PILL = { left: 0, width: 0, opacity: 0 };
 
 const NavBar = () => {
@@ -23,6 +29,10 @@ const NavBar = () => {
   const [activePill, setActivePill] = useState(HIDDEN_PILL);
   const [hoverPill, setHoverPill] = useState(HIDDEN_PILL);
 
+  /**
+   * Measure a nav link's position relative to the track for pill placement.
+   * @param {string} key - NAV_ITEMS `to` path used as ref key
+   */
   const measureLink = useCallback((key) => {
     const linkEl = linkRefs.current[key];
     const trackEl = trackRef.current;
@@ -38,6 +48,7 @@ const NavBar = () => {
     };
   }, []);
 
+  /** Which nav item matches the current URL (for the active sliding pill). */
   const getActiveKey = useCallback(() => {
     const item = NAV_ITEMS.find(({ to, end, isActive }) => {
       if (isActive) return isActive({ pathname: location.pathname });
@@ -47,6 +58,7 @@ const NavBar = () => {
     return item?.to ?? null;
   }, [location.pathname]);
 
+  // Move active pill when route changes (before paint to avoid flicker)
   useLayoutEffect(() => {
     const activeKey = getActiveKey();
     if (activeKey) {
@@ -57,6 +69,7 @@ const NavBar = () => {
     setHoverPill(HIDDEN_PILL);
   }, [location.pathname, getActiveKey, measureLink]);
 
+  // Re-measure active pill on window resize
   useLayoutEffect(() => {
     const handleResize = () => {
       const activeKey = getActiveKey();

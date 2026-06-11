@@ -1,3 +1,7 @@
+/**
+ * Global error handler — last middleware; maps errors to JSON responses.
+ * Handles Mongoose validation errors and duplicate key (11000).
+ */
 function errorHandler(err, req, res, next) {
   console.error(err);
 

@@ -1,3 +1,7 @@
+/**
+ * WriteArticlePage — create new article form. Route: /write
+ * POSTs to API then redirects to the new article with justPublished state.
+ */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as api from '../services/api';
@@ -11,6 +15,7 @@ const WriteArticlePage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  /** Validate, create article via API, navigate to detail page on success. */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !body.trim()) return;
@@ -24,6 +29,7 @@ const WriteArticlePage = () => {
         body: body.trim(),
         author: author.trim() || 'Guest',
       });
+      // justPublished triggers success banner + list refetch on ArticlePage
       navigate(`/article/${article.slug}`, { state: { justPublished: true } });
     } catch (err) {
       setError(err.message);

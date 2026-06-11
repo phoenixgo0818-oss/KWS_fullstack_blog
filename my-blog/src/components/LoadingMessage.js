@@ -1,3 +1,6 @@
+/**
+ * LoadingMessage — shared spinner + text for async page loads.
+ */
 import './LoadingMessage.css';
 
 const LoadingMessage = ({ message = 'Loading…' }) => (

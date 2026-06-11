@@ -1,3 +1,7 @@
+/**
+ * Express app setup — middleware, API routes, 404 and error handlers.
+ * Exported for server.js; not started here.
+ */
 const express = require('express');
 const cors = require('cors');
 const apiRouter = require('./routes');

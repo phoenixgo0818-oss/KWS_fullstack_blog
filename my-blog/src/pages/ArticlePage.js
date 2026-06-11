@@ -1,3 +1,8 @@
+/**
+ * ArticlePage — single article with sidebar, upvote, and comments.
+ * Route: /article/:slug
+ * List comes from useArticles(); single article fetched per slug change.
+ */
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import ArticlesList from '../components/ArticlesList';
@@ -30,12 +35,14 @@ const ArticlePage = () => {
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // After publishing, refresh sidebar list so the new article appears
   useEffect(() => {
     if (justPublished) {
       refetch();
     }
   }, [justPublished, refetch]);
 
+  // Fetch only this article when slug changes (list is cached in context)
   useEffect(() => {
     setArticleLoading(true);
     setNotFound(false);
@@ -54,6 +61,7 @@ const ArticlePage = () => {
       .finally(() => setArticleLoading(false));
   }, [slug]);
 
+  /** POST upvote and sync local + cached list state. */
   const handleUpvote = async () => {
     setUpvoting(true);
     try {
@@ -67,6 +75,7 @@ const ArticlePage = () => {
     }
   };
 
+  /** POST comment and sync local + cached list state. */
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;

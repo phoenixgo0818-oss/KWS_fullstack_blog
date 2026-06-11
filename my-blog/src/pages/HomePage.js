@@ -1,3 +1,7 @@
+/**
+ * HomePage — landing intro. Route: /
+ * Static content with link to the article list.
+ */
 import { Link } from 'react-router-dom';
 import './StaticPage.css';
 

@@ -1,3 +1,7 @@
+/**
+ * Jest mock for react-router-dom — minimal stubs so App tests run without a real router.
+ * Mapped in package.json jest.moduleNameMapper.
+ */
 import React from 'react';
 
 export const BrowserRouter = ({ children }) => <div>{children}</div>;

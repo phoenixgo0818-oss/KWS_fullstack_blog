@@ -1,3 +1,8 @@
+/**
+ * ArticlesList — presentational nav of article links (sidebar or full list).
+ * Props: articles (required), activeSlug (optional), showHeading (optional).
+ * Does not fetch data — parent or useArticles supplies articles.
+ */
 import { Link } from 'react-router-dom';
 import { formatDate } from '../utils/formatDate';
 import EmptyArticlesMessage from './EmptyArticlesMessage';

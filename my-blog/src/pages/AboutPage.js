@@ -1,3 +1,6 @@
+/**
+ * AboutPage — project description. Route: /about
+ */
 import { Link } from 'react-router-dom';
 import './StaticPage.css';
 

@@ -1,3 +1,7 @@
+/**
+ * Seed script — load seedArticles into MongoDB.
+ * Run: npm run seed | npm run seed:reset (--reset clears collection first)
+ */
 require('dotenv').config();
 
 const mongoose = require('mongoose');
@@ -7,6 +11,7 @@ const seedArticles = require('../data/seedArticles');
 
 const reset = process.argv.includes('--reset');
 
+/** Map seed data objects to Mongoose document shape. */
 function toDocuments() {
   return seedArticles.map((article) => ({
     id: article.id || article.slug,

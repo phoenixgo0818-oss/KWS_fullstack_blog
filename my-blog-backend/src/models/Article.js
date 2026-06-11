@@ -1,3 +1,7 @@
+/**
+ * Article Mongoose model — schema for blog posts stored in MongoDB.
+ * id and slug are both set from the title; comments are embedded sub-documents.
+ */
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema(

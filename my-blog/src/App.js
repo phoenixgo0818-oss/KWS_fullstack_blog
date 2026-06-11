@@ -1,3 +1,7 @@
+/**
+ * Root layout: NavBar, site hero, routing, and global providers.
+ * Wraps routes in ArticlesProvider (shared list) and ErrorBoundary (crash guard).
+ */
 import './App.css';
 import NavBar from './NavBar';
 import ErrorBoundary from './components/ErrorBoundary';
