@@ -43,8 +43,28 @@
   color: var(--color-text-muted);
 }
 
+.article-published-banner {
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-accent);
+  background: rgba(126, 217, 87, 0.1);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
 .article-layout__main h1 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.35rem;
   font-size: clamp(1.375rem, 3.5vw, 1.75rem);
   font-weight: 600;
   letter-spacing: -0.02em;

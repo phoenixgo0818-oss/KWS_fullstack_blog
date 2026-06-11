@@ -112,9 +112,9 @@ Work through these before starting user authentication.
 
 ### 2.1 Show article metadata (high value, easy)
 
-- [ ] Display **author** and **createdAt** under the title on `ArticlePage`
-- [ ] Show author and date as a subtitle in `ArticlesList` links
-- [ ] Add styles in `ArticlePage.css` and `ArticlesList.css`
+- [x] Display **author** and **createdAt** under the title on `ArticlePage`
+- [x] Show author and date as a subtitle in `ArticlesList` links
+- [x] Add styles in `ArticlePage.css` and `ArticlesList.css`
 
 **Files to touch:**
 - `my-blog/src/pages/ArticlePage.js`
@@ -358,7 +358,7 @@ flowchart LR
 
 Progress tracker:
 
-- [ ] Step 1 — Metadata
+- [x] Step 1 — Metadata
 - [ ] Step 2 — Empty and loading states
 - [ ] Step 3 — NavLink active state
 - [ ] Step 4 — Hooks and shared UI

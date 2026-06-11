@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import ArticlesList from '../components/ArticlesList';
 import NotFoundPage from './NotFoundPage';
 import * as api from '../services/api';
+import { formatDate } from '../utils/formatDate';
 import './ArticlePage.css';
 
 const ArticlePage = () => {
@@ -87,6 +88,13 @@ const ArticlePage = () => {
       </aside>
       <main className="article-layout__main">
         <h1>{article.title}</h1>
+        <p className="article-meta">
+          <span>By {article.author ?? 'Guest'}</span>
+          <span aria-hidden="true">·</span>
+          <time dateTime={article.createdAt}>
+            {formatDate(article.createdAt)}
+          </time>
+        </p>
         <div className="article-upvote">
           <button
             type="button"
@@ -144,9 +152,7 @@ const ArticlePage = () => {
                 <li key={comment.id} className="article-comments__item">
                   <p className="article-comments__meta">
                     <strong>{comment.author}</strong>
-                    <span>
-                      {new Date(comment.createdAt).toLocaleDateString()}
-                    </span>
+                    <span>{formatDate(comment.createdAt)}</span>
                   </p>
                   <p className="article-comments__text">{comment.text}</p>
                 </li>
