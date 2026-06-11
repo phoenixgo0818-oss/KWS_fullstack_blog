@@ -179,11 +179,11 @@ Promise.all([api.getArticles(), api.getArticle(slug)])
 
 ### 2.5 NavBar improvements (Step 3 — visual polish)
 
-- [ ] Replace `Link` with `NavLink` from `react-router-dom` for active link highlighting
-- [ ] Add a **sliding frosted-glass indicator** that moves smoothly to the active link
-- [ ] Add **hover state** — blurred glass box behind the hovered link
-- [ ] Fix indentation inconsistency in `NavBar.js` (4 spaces vs 2 elsewhere)
-- [ ] Plan a placeholder slot for "Login / Register" (even before auth is built)
+- [x] Replace `Link` with `NavLink` from `react-router-dom` for active link highlighting
+- [x] Add a **sliding frosted-glass indicator** that moves smoothly to the active link
+- [x] Add **hover state** — blurred glass box behind the hovered link
+- [x] Fix indentation inconsistency in `NavBar.js` (4 spaces vs 2 elsewhere)
+- [x] Plan a placeholder slot for "Login / Register" (even before auth is built)
 
 **Files to touch:**
 - `my-blog/src/NavBar.js`
@@ -376,7 +376,7 @@ Progress tracker:
 
 - [x] Step 1 — Metadata
 - [x] Step 2 — Empty and loading states
-- [ ] Step 3 — NavLink + sliding frosted-glass hover/active indicator
+- [x] Step 3 — NavLink + sliding frosted-glass hover/active indicator
 - [ ] Step 4 — Hooks and shared UI
 - [ ] Step 5 — Home recent articles / search / sort
 - [ ] Step 6 — Auth
