@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom';
 import { formatDate } from '../utils/formatDate';
+import EmptyArticlesMessage from './EmptyArticlesMessage';
 import './ArticlesList.css';
 
 const ArticlesList = ({ articles, activeSlug, showHeading = false }) => {
+  if (articles.length === 0) {
+    return <EmptyArticlesMessage />;
+  }
+
   return (
     <nav className="articles-list" aria-label="Articles">
       {showHeading && <h2 className="articles-list__heading">Articles</h2>}

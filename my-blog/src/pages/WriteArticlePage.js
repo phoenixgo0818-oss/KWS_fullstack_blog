@@ -24,7 +24,7 @@ const WriteArticlePage = () => {
         body: body.trim(),
         author: author.trim() || 'Guest',
       });
-      navigate(`/article/${article.slug}`);
+      navigate(`/article/${article.slug}`, { state: { justPublished: true } });
     } catch (err) {
       setError(err.message);
     } finally {

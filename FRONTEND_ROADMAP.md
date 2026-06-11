@@ -165,10 +165,10 @@ Promise.all([api.getArticles(), api.getArticle(slug)])
 
 ### 2.4 Empty and edge states
 
-- [ ] `ArticleListPage` — show "No articles yet" with a link to `/write` when list is empty
-- [ ] `ArticlesList` — handle `articles.length === 0` gracefully
-- [ ] `WriteArticlePage` — optional success message before redirect
-- [ ] Add `ErrorBoundary` component so one crash does not white-screen the app
+- [x] `ArticleListPage` — show "No articles yet" with a link to `/write` when list is empty
+- [x] `ArticlesList` — handle `articles.length === 0` gracefully
+- [x] `WriteArticlePage` — optional success message before redirect
+- [x] Add `ErrorBoundary` component so one crash does not white-screen the app
 
 **Files to touch:**
 - `my-blog/src/pages/ArticleListPage.js`
@@ -177,10 +177,11 @@ Promise.all([api.getArticles(), api.getArticle(slug)])
 
 ---
 
-### 2.5 NavBar improvements
+### 2.5 NavBar improvements (Step 3 — visual polish)
 
 - [ ] Replace `Link` with `NavLink` from `react-router-dom` for active link highlighting
-- [ ] Add active class styles in `NavBar.css`
+- [ ] Add a **sliding frosted-glass indicator** that moves smoothly to the active link
+- [ ] Add **hover state** — blurred glass box behind the hovered link
 - [ ] Fix indentation inconsistency in `NavBar.js` (4 spaces vs 2 elsewhere)
 - [ ] Plan a placeholder slot for "Login / Register" (even before auth is built)
 
@@ -188,7 +189,22 @@ Promise.all([api.getArticles(), api.getArticle(slug)])
 - `my-blog/src/NavBar.js`
 - `my-blog/src/NavBar.css`
 
-**Tip:** `NavLink` automatically adds an `active` class when the URL matches.
+**Visual design (Step 3):**
+
+| State | Effect |
+|-------|--------|
+| **Hover** | Soft frosted box behind the link — `backdrop-filter: blur(8px)`, semi-transparent green tint, rounded corners |
+| **Active** | Same frosted box, but as a **single shared pill** that **slides smoothly** to the clicked/active link (`transition` on `left` / `width` or `transform`) |
+| **Default** | Muted text; no box |
+
+**Implementation approach:**
+1. Wrap links in a `navbar__track` container with `position: relative`
+2. Render one `navbar__indicator` element (the sliding box)
+3. On mount and route change, measure the active link's position/size and move the indicator
+4. On hover, show a separate `navbar__hover-bg` or temporary highlight on that item
+5. Use `NavLink` so React Router tells you which link is active
+
+**Tip:** `NavLink` adds an `active` class automatically. The sliding box is one extra `div` whose position you update with a `useEffect` + `getBoundingClientRect()` — a common pattern in modern navbars.
 
 ---
 
@@ -351,7 +367,7 @@ flowchart LR
 |------|------|--------|--------|
 | 1 | Show author + date on article page and list | Low | High |
 | 2 | Empty states + better loading UI | Low | Medium |
-| 3 | Active nav links with `NavLink` | Low | Medium |
+| 3 | Active nav links + sliding frosted-glass indicator | Low–Medium | Medium |
 | 4 | Extract `useArticles` hook + shared Loading/Error components | Medium | High |
 | 5 | Home page recent articles + search/sort | Low–Medium | Medium |
 | 6 | User authentication | Large | Foundation for multi-user |
@@ -359,8 +375,8 @@ flowchart LR
 Progress tracker:
 
 - [x] Step 1 — Metadata
-- [ ] Step 2 — Empty and loading states
-- [ ] Step 3 — NavLink active state
+- [x] Step 2 — Empty and loading states
+- [ ] Step 3 — NavLink + sliding frosted-glass hover/active indicator
 - [ ] Step 4 — Hooks and shared UI
 - [ ] Step 5 — Home recent articles / search / sort
 - [ ] Step 6 — Auth

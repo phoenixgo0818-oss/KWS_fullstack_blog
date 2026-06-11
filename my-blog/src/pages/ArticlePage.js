@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import ArticlesList from '../components/ArticlesList';
+import LoadingMessage from '../components/LoadingMessage';
+import ErrorMessage from '../components/ErrorMessage';
 import NotFoundPage from './NotFoundPage';
 import * as api from '../services/api';
 import { formatDate } from '../utils/formatDate';
@@ -8,6 +10,8 @@ import './ArticlePage.css';
 
 const ArticlePage = () => {
   const { slug } = useParams();
+  const location = useLocation();
+  const justPublished = location.state?.justPublished === true;
   const [articles, setArticles] = useState([]);
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,9 +79,11 @@ const ArticlePage = () => {
     }
   };
 
-  if (loading) return <p>Loading article…</p>;
+  if (loading) return <LoadingMessage message="Loading article…" />;
   if (notFound) return <NotFoundPage />;
-  if (error) return <p>Could not load article: {error}</p>;
+  if (error) {
+    return <ErrorMessage message={error} prefix="Could not load article" />;
+  }
 
   const comments = article.comments ?? [];
 
@@ -87,6 +93,11 @@ const ArticlePage = () => {
         <ArticlesList articles={articles} activeSlug={slug} />
       </aside>
       <main className="article-layout__main">
+        {justPublished && (
+          <p className="article-published-banner" role="status">
+            Article published successfully.
+          </p>
+        )}
         <h1>{article.title}</h1>
         <p className="article-meta">
           <span>By {article.author ?? 'Guest'}</span>

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import ArticlesList from '../components/ArticlesList';
+import LoadingMessage from '../components/LoadingMessage';
+import ErrorMessage from '../components/ErrorMessage';
 import * as api from '../services/api';
 
 const ArticleListPage = () => {
@@ -15,8 +17,10 @@ const ArticleListPage = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Loading articles…</p>;
-  if (error) return <p>Could not load articles: {error}</p>;
+  if (loading) return <LoadingMessage message="Loading articles…" />;
+  if (error) {
+    return <ErrorMessage message={error} prefix="Could not load articles" />;
+  }
 
   return (
     <>
