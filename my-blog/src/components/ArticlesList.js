@@ -4,7 +4,7 @@
  * Does not fetch data — parent or useArticles supplies articles.
  */
 import { Link } from 'react-router-dom';
-import { formatDate } from '../utils/formatDate';
+import { formatRelativeDate } from '../utils/formatDate';
 import EmptyArticlesMessage from './EmptyArticlesMessage';
 import './ArticlesList.css';
 
@@ -30,7 +30,7 @@ const ArticlesList = ({ articles, activeSlug, showHeading = false }) => {
               <span className="articles-list__text">
                 <span className="articles-list__title">{article.title}</span>
                 <span className="articles-list__meta">
-                  {article.author ?? 'Guest'} · {formatDate(article.createdAt)}
+                  {article.author ?? 'Guest'} · {formatRelativeDate(article.createdAt)}
                 </span>
               </span>
               <span className="articles-list__counts">

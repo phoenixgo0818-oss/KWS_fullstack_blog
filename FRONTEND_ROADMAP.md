@@ -274,12 +274,12 @@ Currently only one smoke test exists (`App.test.js` checks site title).
 
 Checklist:
 
-- [ ] Sort articles (newest first, most upvoted)
-- [ ] Search/filter on article list page
-- [ ] Recent articles preview on HomePage
-- [ ] Relative date formatting
-- [ ] Mobile responsive review
-- [ ] Improved loading states (spinner or skeleton)
+- [x] Sort articles (newest first, most upvoted)
+- [x] Search/filter on article list page
+- [x] Recent articles preview on HomePage
+- [x] Relative date formatting
+- [x] Mobile responsive review
+- [x] Improved loading states (spinner or skeleton)
 
 ---
 
@@ -380,7 +380,7 @@ Progress tracker:
 - [x] Step 2 — Empty and loading states
 - [x] Step 3 — NavLink + sliding frosted-glass hover/active indicator
 - [x] Step 4 — Hooks and shared UI
-- [ ] Step 5 — Home recent articles / search / sort
+- [x] Step 5 — Home recent articles / search / sort
 - [ ] Step 6 — Auth
 
 ---
