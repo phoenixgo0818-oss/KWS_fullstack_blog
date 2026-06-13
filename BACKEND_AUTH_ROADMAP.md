@@ -380,7 +380,7 @@ curl -X POST http://localhost:8000/api/articles \
 
 ## Progress Tracker
 
-- [ ] Step 1 — Install bcryptjs + jsonwebtoken
+- [x] Step 1 — Install bcryptjs + jsonwebtoken
 - [ ] Step 2 — Add JWT_SECRET to .env files
 - [ ] Step 3 — Create User model
 - [ ] Step 4 — Create auth routes (register + login)
