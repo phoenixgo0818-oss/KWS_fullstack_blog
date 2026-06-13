@@ -13,7 +13,6 @@
 
 .navbar__pill {
   position: absolute;
-  top: 50%;
   height: 2.35rem;
   border-radius: 0.5rem;
   pointer-events: none;

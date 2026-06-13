@@ -43,6 +43,7 @@ const NavBar = () => {
 
     return {
       left: linkRect.left - trackRect.left,
+      top: linkRect.top - trackRect.top + linkRect.height / 2,
       width: linkRect.width,
       opacity: 1,
     };
