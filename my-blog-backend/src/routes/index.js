@@ -5,6 +5,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const articlesRouter = require('./articles');
+const authRouter     = require('./auth');
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.get('/health', (req, res) => {
 });
 
 router.use('/articles', articlesRouter);
+router.use('/auth', authRouter);
 
 module.exports = router;
