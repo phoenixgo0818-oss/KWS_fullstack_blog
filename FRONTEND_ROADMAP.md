@@ -10,7 +10,7 @@ A step-by-step guide for improving the **my-blog** React frontend before adding 
 
 ---
 
-## Tutor Principle
+1## Tutor Principle
 
 > **Before auth, focus on structure and display. After auth, focus on permissions and ownership.**
 

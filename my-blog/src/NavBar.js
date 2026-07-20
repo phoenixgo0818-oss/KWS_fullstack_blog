@@ -1,9 +1,11 @@
 /**
  * Main navigation — NavLink items with sliding frosted-glass active indicator
- * and hover highlight. Login placeholder reserved for future auth.
+ * and hover highlight. Shows a Login link when logged out, or the current
+ * user + a Log out button when logged in.
  */
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
 import './NavBar.css';
 
 const NAV_ITEMS = [
@@ -24,6 +26,8 @@ const HIDDEN_PILL = { left: 0, width: 0, opacity: 0 };
 
 const NavBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
   const trackRef = useRef(null);
   const linkRefs = useRef({});
   const [activePill, setActivePill] = useState(HIDDEN_PILL);
@@ -91,6 +95,12 @@ const NavBar = () => {
     setHoverPill(HIDDEN_PILL);
   };
 
+  /** Clear the session and return to the homepage. */
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <nav className="navbar" aria-label="Main">
       <div className="navbar__track" ref={trackRef}>
@@ -124,10 +134,23 @@ const NavBar = () => {
               </NavLink>
             </li>
           ))}
-          <li className="navbar__auth-placeholder" aria-hidden="true">
-            <span className="navbar__auth-link navbar__auth-link--disabled">
-              Login
-            </span>
+          <li className="navbar__auth">
+            {isAuthenticated ? (
+              <span className="navbar__auth-group">
+                <span className="navbar__auth-user">Hi, {user.username}</span>
+                <button
+                  type="button"
+                  className="navbar__auth-logout"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </button>
+              </span>
+            ) : (
+              <NavLink to="/login" className="navbar__auth-link">
+                Login
+              </NavLink>
+            )}
           </li>
         </ul>
       </div>

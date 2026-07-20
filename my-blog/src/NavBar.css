@@ -79,9 +79,8 @@
   color: var(--color-accent);
 }
 
-.navbar__auth-placeholder {
+.navbar__auth {
   margin-left: 1.5rem;
-  opacity: 0.45;
 }
 
 .navbar__auth-link {
@@ -90,9 +89,40 @@
   font-weight: 500;
   font-size: calc(1.0625rem * 1.5);
   color: var(--color-text-subtle);
+  text-decoration: none;
+  border-radius: 0.5rem;
+  transition: color 0.2s ease;
 }
 
-.navbar__auth-link--disabled {
-  cursor: default;
-  user-select: none;
+.navbar__auth-link:hover {
+  color: var(--color-accent-hover);
+}
+
+.navbar__auth-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.navbar__auth-user {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.navbar__auth-logout {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.navbar__auth-logout:hover {
+  color: var(--color-accent-hover);
+  border-color: rgba(126, 217, 87, 0.35);
 }
