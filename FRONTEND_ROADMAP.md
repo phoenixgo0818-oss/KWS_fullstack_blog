@@ -217,8 +217,9 @@ These are **temporary** until auth is added:
 - `WriteArticlePage` — "Author (optional)" input
 - `ArticlePage` — "Your name (optional)" on comment form
 
-- [ ] Tag these fields mentally as temporary
-- [ ] When auth is added: remove author inputs; use logged-in user's name from session/token
+- [x] Tag these fields mentally as temporary
+- [x] `WriteArticlePage` — author input removed; author now comes from the logged-in user's JWT
+- [ ] `ArticlePage` — comment name field left as-is; comments stay open to guests by design (see BACKEND_AUTH_ROADMAP.md Step 7 note), revisit under "Comment as logged-in user" in section 3
 
 **Files affected later:**
 - `my-blog/src/pages/WriteArticlePage.js`
@@ -381,7 +382,7 @@ Progress tracker:
 - [x] Step 3 — NavLink + sliding frosted-glass hover/active indicator
 - [x] Step 4 — Hooks and shared UI
 - [x] Step 5 — Home recent articles / search / sort
-- [ ] Step 6 — Auth
+- [x] Step 6 — Auth
 
 ---
 

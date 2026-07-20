@@ -70,14 +70,15 @@ export function addComment(slug, { author, text }) {
 }
 
 /**
- * POST /api/articles — create article.
- * @param {{ title: string, body: string, author?: string }} payload
+ * POST /api/articles — create article. Requires a logged-in user (JWT sent via request()).
+ * @param {{ title: string, body: string }} payload
  *   body is plain text; backend splits on blank lines into content[].
+ *   author is not sent — the backend derives it from the token.
  */
-export function createArticle({ title, body, author }) {
+export function createArticle({ title, body }) {
   return request('/api/articles', {
     method: 'POST',
-    body: JSON.stringify({ title, body, author }),
+    body: JSON.stringify({ title, body }),
   });
 }
 

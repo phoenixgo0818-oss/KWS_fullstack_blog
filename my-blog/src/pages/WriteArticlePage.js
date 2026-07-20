@@ -1,17 +1,18 @@
 /**
- * WriteArticlePage — create new article form. Route: /write
+ * WriteArticlePage — create new article form. Route: /write (behind ProtectedRoute)
  * POSTs to API then redirects to the new article with justPublished state.
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as api from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 import './WriteArticlePage.css';
 
 const WriteArticlePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [author, setAuthor] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -24,11 +25,8 @@ const WriteArticlePage = () => {
     setError(null);
 
     try {
-      const article = await api.createArticle({
-        title: title.trim(),
-        body: body.trim(),
-        author: author.trim() || 'Guest',
-      });
+      // author is not sent — the backend takes it from the JWT (req.user.username)
+      const article = await api.createArticle({ title: title.trim(), body: body.trim() });
       // justPublished triggers success banner + list refetch on ArticlePage
       navigate(`/article/${article.slug}`, { state: { justPublished: true } });
     } catch (err) {
@@ -42,7 +40,8 @@ const WriteArticlePage = () => {
     <div className="write-article">
       <h1 className="write-article__title">Write an article</h1>
       <p className="write-article__hint">
-        Separate paragraphs with a blank line.
+        Separate paragraphs with a blank line. Publishing as{' '}
+        <strong>{user.username}</strong>.
       </p>
 
       <form className="write-article__form" onSubmit={handleSubmit}>
@@ -57,19 +56,6 @@ const WriteArticlePage = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-        />
-
-        <label className="write-article__label" htmlFor="article-author">
-          Author (optional)
-        </label>
-        <input
-          id="article-author"
-          type="text"
-          className="write-article__input"
-          placeholder="Your name"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          maxLength={50}
         />
 
         <label className="write-article__label" htmlFor="article-body">
