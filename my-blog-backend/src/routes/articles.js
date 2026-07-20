@@ -2,8 +2,9 @@
  * Article routes — REST API under /api/articles.
  * Delegates persistence to articleStore (MongoDB).
  */
-const express = require('express');
+const express      = require('express');
 const articleStore = require('../store/articleStore');
+const authenticate = require('../middleware/authenticate');
 
 const router = express.Router();
 
@@ -63,12 +64,12 @@ router.get('/:slug', async (req, res, next) => {
 });
 
 /**
- * POST /api/articles — create article.
- * Body: { title, body, author? } — body is split into content[] paragraphs.
+ * POST /api/articles — create article. Requires a valid JWT.
+ * Body: { title, body } — author is taken from the token, not the client.
  */
-router.post('/', async (req, res, next) => {
+router.post('/', authenticate, async (req, res, next) => {
   try {
-    const { title, body, author } = req.body;
+    const { title, body } = req.body;
 
     if (!title || typeof title !== 'string' || !title.trim()) {
       return res.status(400).json({ error: 'Title is required' });
@@ -77,7 +78,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'Body is required' });
     }
 
-    const article = await articleStore.create({ title, body, author });
+    const article = await articleStore.create({ title, body, author: req.user.username });
     res.status(201).json(article);
   } catch (err) {
     next(err);
