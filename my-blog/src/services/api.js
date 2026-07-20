@@ -4,18 +4,38 @@
  */
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const TOKEN_KEY = 'kws_phoenix_blog_token';
+
+/** Read the stored JWT, if any. */
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+/** Persist the JWT after register/login. */
+export function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+/** Remove the stored JWT (logout). */
+export function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
 
 /**
  * Shared fetch wrapper: JSON headers, parses body, throws on non-OK responses.
+ * Attaches the stored JWT as a Bearer token when one is present.
  * @param {string} path - API path (e.g. '/api/articles')
  * @param {RequestInit} [options] - fetch options (method, body, etc.)
  * @returns {Promise<unknown>} Parsed JSON response
  */
 async function request(path, options = {}) {
+  const token = getToken();
+
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
@@ -58,5 +78,29 @@ export function createArticle({ title, body, author }) {
   return request('/api/articles', {
     method: 'POST',
     body: JSON.stringify({ title, body, author }),
+  });
+}
+
+/**
+ * POST /api/auth/register — create an account.
+ * @param {{ username: string, email: string, password: string }} payload
+ * @returns {Promise<{ token: string, user: { id, username, email } }>}
+ */
+export function register({ username, email, password }) {
+  return request('/api/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ username, email, password }),
+  });
+}
+
+/**
+ * POST /api/auth/login — verify credentials and get a JWT.
+ * @param {{ email: string, password: string }} payload
+ * @returns {Promise<{ token: string, user: { id, username, email } }>}
+ */
+export function login({ email, password }) {
+  return request('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
   });
 }
