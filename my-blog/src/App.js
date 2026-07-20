@@ -5,6 +5,7 @@
 import './App.css';
 import NavBar from './NavBar';
 import ErrorBoundary from './components/ErrorBoundary';
+import ProtectedRoute from './components/ProtectedRoute';
 import { ArticlesProvider } from './hooks/useArticles';
 import { AuthProvider } from './hooks/useAuth';
 import HomePage from './pages/HomePage';
@@ -35,7 +36,14 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/article/:slug" element={<ArticlePage />} />
             <Route path="/articles-list" element={<ArticleListPage />} />
-            <Route path="/write" element={<WriteArticlePage />} />
+            <Route
+              path="/write"
+              element={
+                <ProtectedRoute>
+                  <WriteArticlePage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="*" element={<NotFoundPage />} />
