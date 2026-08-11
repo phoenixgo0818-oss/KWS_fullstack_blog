@@ -28,6 +28,7 @@ function toApiArticle(doc, currentUserId) {
     content: doc.content,
     upvotes: upvoterIds.length,
     hasUpvoted: currentUserId ? upvoterIds.includes(currentUserId) : false,
+    isOwner: currentUserId ? doc.authorId === currentUserId : false,
     comments: (doc.comments ?? []).map((comment) => ({
       id: comment.id,
       author: comment.author,
@@ -35,6 +36,14 @@ function toApiArticle(doc, currentUserId) {
       createdAt: toApiDate(comment.createdAt),
     })),
   };
+}
+
+/** Split a raw body string into paragraphs on blank lines (\n\n). */
+function splitIntoParagraphs(body) {
+  return body
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
 }
 
 /** Turn a title into a URL slug (lowercase, hyphens, no special chars). */
@@ -71,25 +80,49 @@ async function getBySlug(slug, currentUserId) {
  * Create article from title + body string.
  * Body paragraphs: split on blank lines (\n\n).
  */
-async function create({ title, body, author = 'Guest' }) {
+async function create({ title, body, author = 'Guest', authorId = null }) {
   const baseSlug = slugify(title) || `post-${Date.now()}`;
   const slug = await uniqueSlug(baseSlug);
-  const content = body
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+  const content = splitIntoParagraphs(body);
 
   const doc = await Article.create({
     id: slug,
     slug,
     title: title.trim(),
     author,
+    authorId,
     content: content.length > 0 ? content : ['(No content yet.)'],
     upvoterIds: [],
     comments: [],
   });
 
-  return toApiArticle(doc.toObject());
+  return toApiArticle(doc.toObject(), authorId);
+}
+
+/**
+ * Update title/content on an article. Caller (route) must already have
+ * verified ownership — this just performs the write.
+ */
+async function update(slug, { title, body }, currentUserId) {
+  const content = splitIntoParagraphs(body);
+
+  const doc = await Article.findOneAndUpdate(
+    { slug },
+    {
+      $set: {
+        title: title.trim(),
+        content: content.length > 0 ? content : ['(No content yet.)'],
+      },
+    },
+    { returnDocument: 'after' }
+  ).lean();
+
+  return toApiArticle(doc, currentUserId);
+}
+
+async function remove(slug) {
+  const { deletedCount } = await Article.deleteOne({ slug });
+  return deletedCount > 0;
 }
 
 /**
@@ -137,6 +170,8 @@ module.exports = {
   getAll,
   getBySlug,
   create,
+  update,
+  remove,
   toggleUpvote,
   addComment,
 };

@@ -20,6 +20,7 @@ const articleSchema = new mongoose.Schema(
     slug: { type: String, required: true, unique: true },
     title: { type: String, required: true },
     author: { type: String, default: 'Guest' },
+    authorId: { type: String, default: null },
     createdAt: { type: Date, default: Date.now },
     content: { type: [String], required: true },
     upvoterIds: { type: [String], default: [] },

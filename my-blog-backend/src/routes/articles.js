@@ -86,8 +86,61 @@ router.post('/', authenticate, async (req, res, next) => {
       return res.status(400).json({ error: 'Body is required' });
     }
 
-    const article = await articleStore.create({ title, body, author: req.user.username });
+    const article = await articleStore.create({
+      title,
+      body,
+      author: req.user.username,
+      authorId: req.user.userId,
+    });
     res.status(201).json(article);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * PATCH /api/articles/:slug — edit title/body. Requires login AND ownership.
+ * Body: { title, body }
+ */
+router.patch('/:slug', authenticate, async (req, res, next) => {
+  try {
+    const { title, body } = req.body;
+
+    if (!title || typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ error: 'Title is required' });
+    }
+    if (!body || typeof body !== 'string' || !body.trim()) {
+      return res.status(400).json({ error: 'Body is required' });
+    }
+
+    const existing = await articleStore.getBySlug(req.params.slug, req.user.userId);
+    if (!existing) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+    if (!existing.isOwner) {
+      return res.status(403).json({ error: 'You can only edit your own articles' });
+    }
+
+    const article = await articleStore.update(req.params.slug, { title, body }, req.user.userId);
+    res.json(article);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/** DELETE /api/articles/:slug — remove an article. Requires login AND ownership. */
+router.delete('/:slug', authenticate, async (req, res, next) => {
+  try {
+    const existing = await articleStore.getBySlug(req.params.slug, req.user.userId);
+    if (!existing) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+    if (!existing.isOwner) {
+      return res.status(403).json({ error: 'You can only delete your own articles' });
+    }
+
+    await articleStore.remove(req.params.slug);
+    res.status(204).send();
   } catch (err) {
     next(err);
   }
