@@ -22,7 +22,7 @@ const articleSchema = new mongoose.Schema(
     author: { type: String, default: 'Guest' },
     createdAt: { type: Date, default: Date.now },
     content: { type: [String], required: true },
-    upvotes: { type: Number, default: 0 },
+    upvoterIds: { type: [String], default: [] },
     comments: { type: [commentSchema], default: [] },
   },
   {

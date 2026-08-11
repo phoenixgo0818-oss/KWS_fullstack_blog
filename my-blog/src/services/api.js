@@ -56,7 +56,7 @@ export function getArticle(slug) {
   return request(`/api/articles/${slug}`);
 }
 
-/** POST /api/articles/:slug/upvote — increment upvote count, returns updated article. */
+/** POST /api/articles/:slug/upvote — toggles the logged-in user's upvote, returns updated article. */
 export function upvoteArticle(slug) {
   return request(`/api/articles/${slug}/upvote`, { method: 'POST' });
 }

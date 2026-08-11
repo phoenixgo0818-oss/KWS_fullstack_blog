@@ -9,9 +9,15 @@ function toApiDate(value) {
   return value instanceof Date ? value.toISOString() : value;
 }
 
-/** Convert a lean Mongoose doc to the public API article object. */
-function toApiArticle(doc) {
+/**
+ * Convert a lean Mongoose doc to the public API article object.
+ * @param {string|undefined} currentUserId - id of the requesting user, if logged in.
+ *   Used to compute `hasUpvoted` without ever exposing the full voter list.
+ */
+function toApiArticle(doc, currentUserId) {
   if (!doc) return null;
+
+  const upvoterIds = doc.upvoterIds ?? [];
 
   return {
     id: doc.id,
@@ -20,7 +26,8 @@ function toApiArticle(doc) {
     author: doc.author,
     createdAt: toApiDate(doc.createdAt),
     content: doc.content,
-    upvotes: doc.upvotes ?? 0,
+    upvotes: upvoterIds.length,
+    hasUpvoted: currentUserId ? upvoterIds.includes(currentUserId) : false,
     comments: (doc.comments ?? []).map((comment) => ({
       id: comment.id,
       author: comment.author,
@@ -50,14 +57,14 @@ async function uniqueSlug(baseSlug) {
   return slug;
 }
 
-async function getAll() {
+async function getAll(currentUserId) {
   const docs = await Article.find().sort({ createdAt: 1 }).lean();
-  return docs.map(toApiArticle);
+  return docs.map((doc) => toApiArticle(doc, currentUserId));
 }
 
-async function getBySlug(slug) {
+async function getBySlug(slug, currentUserId) {
   const doc = await Article.findOne({ slug }).lean();
-  return toApiArticle(doc);
+  return toApiArticle(doc, currentUserId);
 }
 
 /**
@@ -78,24 +85,38 @@ async function create({ title, body, author = 'Guest' }) {
     title: title.trim(),
     author,
     content: content.length > 0 ? content : ['(No content yet.)'],
-    upvotes: 0,
+    upvoterIds: [],
     comments: [],
   });
 
   return toApiArticle(doc.toObject());
 }
 
-async function upvote(slug) {
-  const doc = await Article.findOneAndUpdate(
-    { slug },
-    { $inc: { upvotes: 1 } },
+/**
+ * Toggle an upvote for one user on one article — vote if they haven't,
+ * un-vote if they already have. The membership check lives in the query
+ * filter itself (`upvoterIds: userId` / `upvoterIds: { $ne: userId }`), so
+ * the check-then-flip is one atomic operation with no race condition.
+ */
+async function toggleUpvote(slug, userId) {
+  let doc = await Article.findOneAndUpdate(
+    { slug, upvoterIds: userId },
+    { $pull: { upvoterIds: userId } },
     { returnDocument: 'after' }
   ).lean();
 
-  return toApiArticle(doc);
+  if (!doc) {
+    doc = await Article.findOneAndUpdate(
+      { slug, upvoterIds: { $ne: userId } },
+      { $addToSet: { upvoterIds: userId } },
+      { returnDocument: 'after' }
+    ).lean();
+  }
+
+  return toApiArticle(doc, userId);
 }
 
-async function addComment(slug, { author = 'Guest', text }) {
+async function addComment(slug, { author = 'Guest', text }, currentUserId) {
   const comment = {
     id: `comment-${Date.now()}`,
     author: (author || 'Guest').trim() || 'Guest',
@@ -109,13 +130,13 @@ async function addComment(slug, { author = 'Guest', text }) {
     { returnDocument: 'after' }
   ).lean();
 
-  return toApiArticle(doc);
+  return toApiArticle(doc, currentUserId);
 }
 
 module.exports = {
   getAll,
   getBySlug,
   create,
-  upvote,
+  toggleUpvote,
   addComment,
 };

@@ -20,7 +20,7 @@ function toDocuments() {
     author: article.author || 'Guest',
     createdAt: article.createdAt ? new Date(article.createdAt) : new Date(),
     content: article.content,
-    upvotes: article.upvotes ?? 0,
+    upvoterIds: [],
     comments: article.comments ?? [],
   }));
 }

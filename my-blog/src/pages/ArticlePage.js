@@ -10,6 +10,7 @@ import LoadingMessage from '../components/LoadingMessage';
 import ErrorMessage from '../components/ErrorMessage';
 import NotFoundPage from './NotFoundPage';
 import { useArticles } from '../hooks/useArticles';
+import { useAuth } from '../hooks/useAuth';
 import * as api from '../services/api';
 import { formatDate } from '../utils/formatDate';
 import './ArticlePage.css';
@@ -18,6 +19,7 @@ const ArticlePage = () => {
   const { slug } = useParams();
   const location = useLocation();
   const justPublished = location.state?.justPublished === true;
+  const { isAuthenticated } = useAuth();
   const {
     articles,
     loading: listLoading,
@@ -61,8 +63,9 @@ const ArticlePage = () => {
       .finally(() => setArticleLoading(false));
   }, [slug]);
 
-  /** POST upvote and sync local + cached list state. */
+  /** POST upvote (toggles on/off) and sync local + cached list state. */
   const handleUpvote = async () => {
+    if (!isAuthenticated) return;
     setUpvoting(true);
     try {
       const updated = await api.upvoteArticle(slug);
@@ -129,10 +132,12 @@ const ArticlePage = () => {
         <div className="article-upvote">
           <button
             type="button"
-            className="article-upvote__btn"
+            className={`article-upvote__btn${article.hasUpvoted ? ' article-upvote__btn--active' : ''}`}
             onClick={handleUpvote}
-            disabled={upvoting}
-            aria-label="Upvote"
+            disabled={upvoting || !isAuthenticated}
+            aria-pressed={article.hasUpvoted}
+            aria-label={article.hasUpvoted ? 'Remove upvote' : 'Upvote'}
+            title={isAuthenticated ? undefined : 'Log in to upvote'}
           >
             👍
           </button>

@@ -5,23 +5,27 @@
 const express      = require('express');
 const articleStore = require('../store/articleStore');
 const authenticate = require('../middleware/authenticate');
+const optionalAuthenticate = require('../middleware/optionalAuthenticate');
 
 const router = express.Router();
 
 /** GET /api/articles — list all articles (oldest first). */
-router.get('/', async (req, res, next) => {
+router.get('/', optionalAuthenticate, async (req, res, next) => {
   try {
-    const articles = await articleStore.getAll();
+    const articles = await articleStore.getAll(req.user?.userId);
     res.json(articles);
   } catch (err) {
     next(err);
   }
 });
 
-/** POST /api/articles/:slug/upvote — increment upvotes by 1. */
-router.post('/:slug/upvote', async (req, res, next) => {
+/**
+ * POST /api/articles/:slug/upvote — toggle the caller's upvote on/off.
+ * Requires login — the toggle needs to know who "you" are to remember your vote.
+ */
+router.post('/:slug/upvote', authenticate, async (req, res, next) => {
   try {
-    const article = await articleStore.upvote(req.params.slug);
+    const article = await articleStore.toggleUpvote(req.params.slug, req.user.userId);
     if (!article) {
       return res.status(404).json({ error: 'Article not found' });
     }
@@ -32,7 +36,7 @@ router.post('/:slug/upvote', async (req, res, next) => {
 });
 
 /** POST /api/articles/:slug/comments — body: { text, author? }. */
-router.post('/:slug/comments', async (req, res, next) => {
+router.post('/:slug/comments', optionalAuthenticate, async (req, res, next) => {
   try {
     const { text, author } = req.body;
 
@@ -40,7 +44,11 @@ router.post('/:slug/comments', async (req, res, next) => {
       return res.status(400).json({ error: 'Comment text is required' });
     }
 
-    const article = await articleStore.addComment(req.params.slug, { text, author });
+    const article = await articleStore.addComment(
+      req.params.slug,
+      { text, author },
+      req.user?.userId
+    );
     if (!article) {
       return res.status(404).json({ error: 'Article not found' });
     }
@@ -51,9 +59,9 @@ router.post('/:slug/comments', async (req, res, next) => {
 });
 
 /** GET /api/articles/:slug — single article by slug. */
-router.get('/:slug', async (req, res, next) => {
+router.get('/:slug', optionalAuthenticate, async (req, res, next) => {
   try {
-    const article = await articleStore.getBySlug(req.params.slug);
+    const article = await articleStore.getBySlug(req.params.slug, req.user?.userId);
     if (!article) {
       return res.status(404).json({ error: 'Article not found' });
     }

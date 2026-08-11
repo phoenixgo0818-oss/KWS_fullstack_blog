@@ -33,6 +33,12 @@
   color: var(--color-accent);
 }
 
+.article-upvote__btn--active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+}
+
 .article-upvote__btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
