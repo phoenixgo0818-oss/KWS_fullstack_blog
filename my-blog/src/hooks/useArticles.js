@@ -54,6 +54,11 @@ export function ArticlesProvider({ children }) {
     );
   }, []);
 
+  /** Drop one article from the cached list (after delete). */
+  const removeArticle = useCallback((slug) => {
+    setArticles((prev) => prev.filter((a) => a.slug !== slug));
+  }, []);
+
   const value = {
     articles,
     loading,
@@ -61,6 +66,7 @@ export function ArticlesProvider({ children }) {
     refetch,
     setArticles,
     updateArticle,
+    removeArticle,
   };
 
   return (

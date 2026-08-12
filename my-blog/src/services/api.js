@@ -43,6 +43,7 @@ async function request(path, options = {}) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `Request failed (${res.status})`);
   }
+  if (res.status === 204) return null; // no body (e.g. DELETE)
   return res.json();
 }
 
@@ -67,6 +68,25 @@ export function addComment(slug, { author, text }) {
     method: 'POST',
     body: JSON.stringify({ author, text }),
   });
+}
+
+/**
+ * PATCH /api/articles/:slug — edit title/body. Server checks ownership; 403 if not yours.
+ * @param {string} slug
+ * @param {{ title: string, body: string }} payload
+ */
+export function updateArticle(slug, { title, body }) {
+  return request(`/api/articles/${slug}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ title, body }),
+  });
+}
+
+/**
+ * DELETE /api/articles/:slug — remove an article. Server checks ownership; 403 if not yours.
+ */
+export function deleteArticle(slug) {
+  return request(`/api/articles/${slug}`, { method: 'DELETE' });
 }
 
 /**

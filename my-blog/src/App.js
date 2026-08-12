@@ -13,6 +13,8 @@ import AboutPage from './pages/AboutPage';
 import ArticlePage from './pages/ArticlePage';
 import ArticleListPage from './pages/ArticleListPage';
 import WriteArticlePage from './pages/WriteArticlePage';
+import MyArticlesPage from './pages/MyArticlesPage';
+import EditArticlePage from './pages/EditArticlePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -41,6 +43,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <WriteArticlePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-articles"
+              element={
+                <ProtectedRoute>
+                  <MyArticlesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit/:slug"
+              element={
+                <ProtectedRoute>
+                  <EditArticlePage />
                 </ProtectedRoute>
               }
             />

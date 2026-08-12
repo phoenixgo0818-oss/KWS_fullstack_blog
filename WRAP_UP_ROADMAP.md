@@ -90,14 +90,16 @@ then cleaned up all test data.
 
 **Files touched:** `models/Article.js`, `store/articleStore.js`, `routes/articles.js`
 
-### 3.2 Frontend: "My Articles" + edit/delete UI
+### 3.2 Frontend: "My Articles" + edit/delete UI — ✅ Done 2026-08-12
 
-- [ ] `my-blog/src/pages/MyArticlesPage.js` (new) — reuse `useArticles()`, filter client-side where `article.isOwner`
-- [ ] Route `/my-articles`, wrapped in `<ProtectedRoute>`, linked from NavBar when logged in
-- [ ] `EditArticlePage.js` (new) — same form shape as `WriteArticlePage`, pre-filled, `PATCH` instead of `POST`
-- [ ] Delete button on `ArticlePage` (and/or `MyArticlesPage`) — **only rendered when `article.isOwner`** — with a confirm dialog before calling `DELETE`
+- [x] `my-blog/src/pages/MyArticlesPage.js` (new) — reuses `useArticles()`, filters client-side where `article.isOwner`; refetches on mount so `isOwner` is fresh even if the list was cached from before login
+- [x] Route `/my-articles`, wrapped in `<ProtectedRoute>`, linked from NavBar (only rendered when logged in)
+- [x] `EditArticlePage.js` (new) — same form shape as `WriteArticlePage`, pre-filled from `getArticle()`, `PATCH` instead of `POST`; bounces non-owners with an error message as a second layer behind the server check
+- [x] Delete button on **both** `ArticlePage` (inline, owner-only) and `MyArticlesPage` (list actions) — `window.confirm()` before calling `DELETE`, cached list updated via new `removeArticle()` in `useArticles()`
 
-**Files to touch:** `pages/MyArticlesPage.js` (new), `pages/EditArticlePage.js` (new), `App.js` (routes), `NavBar.js`, `services/api.js` (`updateArticle`, `deleteArticle`)
+**Verified:** production build compiles clean; live API test (register → create → confirm `isOwner: true` in both the create response and the list endpoint → edit → delete → confirm 404) — then cleaned up test data.
+
+**Files touched:** `pages/MyArticlesPage.js` + `.css` (new), `pages/EditArticlePage.js` (new), `App.js` (routes), `NavBar.js` (dynamic nav items), `pages/ArticlePage.js` + `.css` (owner-only edit/delete), `hooks/useArticles.js` (`removeArticle`), `services/api.js` (`updateArticle`, `deleteArticle`, 204-response handling)
 
 > **Note:** Hide the edit/delete buttons in the UI *and* enforce it server-side. The UI
 > check is for a good experience; the server check is what actually stops a malicious
@@ -190,7 +192,7 @@ production polish for a project you're intentionally not taking further right no
 ## Progress Tracker
 
 - [x] 3.1 — `authorId` field + ownership-safe backend routes
-- [ ] 3.2 — My Articles page + Edit/Delete UI
+- [x] 3.2 — My Articles page + Edit/Delete UI
 - [ ] 3.3 — Comment as logged-in user (optional, low effort)
 - [ ] 4.2 — Backend deployed
 - [ ] 4.3 — Frontend deployed + CORS wired

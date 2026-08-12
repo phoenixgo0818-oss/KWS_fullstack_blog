@@ -3,12 +3,12 @@
  * and hover highlight. Shows a Login link when logged out, or the current
  * user + a Log out button when logged in.
  */
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import './NavBar.css';
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { to: '/', label: 'Home', end: true },
   { to: '/about', label: 'About' },
   {
@@ -21,6 +21,8 @@ const NAV_ITEMS = [
   { to: '/write', label: 'Write' },
 ];
 
+const MY_ARTICLES_ITEM = { to: '/my-articles', label: 'My Articles' };
+
 /** Hidden pill style — used before measurement or when no link is active */
 const HIDDEN_PILL = { left: 0, width: 0, opacity: 0 };
 
@@ -32,6 +34,11 @@ const NavBar = () => {
   const linkRefs = useRef({});
   const [activePill, setActivePill] = useState(HIDDEN_PILL);
   const [hoverPill, setHoverPill] = useState(HIDDEN_PILL);
+
+  const navItems = useMemo(
+    () => (isAuthenticated ? [...BASE_NAV_ITEMS, MY_ARTICLES_ITEM] : BASE_NAV_ITEMS),
+    [isAuthenticated]
+  );
 
   /**
    * Measure a nav link's position relative to the track for pill placement.
@@ -55,13 +62,13 @@ const NavBar = () => {
 
   /** Which nav item matches the current URL (for the active sliding pill). */
   const getActiveKey = useCallback(() => {
-    const item = NAV_ITEMS.find(({ to, end, isActive }) => {
+    const item = navItems.find(({ to, end, isActive }) => {
       if (isActive) return isActive({ pathname: location.pathname });
       if (end) return location.pathname === to;
       return location.pathname === to;
     });
     return item?.to ?? null;
-  }, [location.pathname]);
+  }, [location.pathname, navItems]);
 
   // Move active pill when route changes (before paint to avoid flicker)
   useLayoutEffect(() => {
@@ -115,7 +122,7 @@ const NavBar = () => {
           aria-hidden="true"
         />
         <ul className="navbar__list">
-          {NAV_ITEMS.map(({ to, label, end, isActive }) => (
+          {navItems.map(({ to, label, end, isActive }) => (
             <li key={to}>
               <NavLink
                 ref={(el) => {

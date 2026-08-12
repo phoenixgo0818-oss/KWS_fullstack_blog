@@ -4,7 +4,7 @@
  * List comes from useArticles(); single article fetched per slug change.
  */
 import { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import ArticlesList from '../components/ArticlesList';
 import LoadingMessage from '../components/LoadingMessage';
 import ErrorMessage from '../components/ErrorMessage';
@@ -18,6 +18,7 @@ import './ArticlePage.css';
 const ArticlePage = () => {
   const { slug } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const justPublished = location.state?.justPublished === true;
   const { isAuthenticated } = useAuth();
   const {
@@ -25,6 +26,7 @@ const ArticlePage = () => {
     loading: listLoading,
     error: listError,
     updateArticle,
+    removeArticle,
     refetch,
   } = useArticles();
 
@@ -36,6 +38,7 @@ const ArticlePage = () => {
   const [author, setAuthor] = useState('');
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // After publishing, refresh sidebar list so the new article appears
   useEffect(() => {
@@ -75,6 +78,21 @@ const ArticlePage = () => {
       setArticleError(err.message);
     } finally {
       setUpvoting(false);
+    }
+  };
+
+  /** DELETE this article (owner only — server re-checks) and return to the list. */
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this article? This cannot be undone.')) return;
+
+    setDeleting(true);
+    try {
+      await api.deleteArticle(slug);
+      removeArticle(slug);
+      navigate('/articles-list');
+    } catch (err) {
+      setArticleError(err.message);
+      setDeleting(false);
     }
   };
 
@@ -128,6 +146,20 @@ const ArticlePage = () => {
           <time dateTime={article.createdAt}>
             {formatDate(article.createdAt)}
           </time>
+          {article.isOwner && (
+            <>
+              <span aria-hidden="true">·</span>
+              <Link to={`/edit/${article.slug}`}>Edit</Link>
+              <button
+                type="button"
+                className="article-meta__delete"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting…' : 'Delete'}
+              </button>
+            </>
+          )}
         </p>
         <div className="article-upvote">
           <button
