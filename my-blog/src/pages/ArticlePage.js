@@ -35,7 +35,6 @@ const ArticlePage = () => {
   const [notFound, setNotFound] = useState(false);
   const [articleError, setArticleError] = useState(null);
   const [upvoting, setUpvoting] = useState(false);
-  const [author, setAuthor] = useState('');
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -103,10 +102,7 @@ const ArticlePage = () => {
 
     setSubmitting(true);
     try {
-      const updated = await api.addComment(slug, {
-        author: author.trim() || 'Guest',
-        text: commentText,
-      });
+      const updated = await api.addComment(slug, { text: commentText });
       setArticle(updated);
       updateArticle(updated);
       setCommentText('');
@@ -187,14 +183,12 @@ const ArticlePage = () => {
           </h2>
 
           <form className="article-comments__form" onSubmit={handleCommentSubmit}>
-            <input
-              type="text"
-              className="article-comments__input"
-              placeholder="Your name (optional)"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              maxLength={50}
-            />
+            {!isAuthenticated && (
+              <p className="article-comments__guest-note">
+                Posting as <strong>Guest</strong> —{' '}
+                <Link to="/login">log in</Link> to comment under your username.
+              </p>
+            )}
             <textarea
               className="article-comments__textarea"
               placeholder="Write a comment…"

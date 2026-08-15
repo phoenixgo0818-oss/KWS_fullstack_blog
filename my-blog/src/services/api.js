@@ -62,11 +62,11 @@ export function upvoteArticle(slug) {
   return request(`/api/articles/${slug}/upvote`, { method: 'POST' });
 }
 
-/** POST /api/articles/:slug/comments — add comment, returns updated article. */
-export function addComment(slug, { author, text }) {
+/** POST /api/articles/:slug/comments — add comment, returns updated article. Author comes from the server-side token. */
+export function addComment(slug, { text }) {
   return request(`/api/articles/${slug}/comments`, {
     method: 'POST',
-    body: JSON.stringify({ author, text }),
+    body: JSON.stringify({ text }),
   });
 }
 

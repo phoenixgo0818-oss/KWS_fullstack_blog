@@ -105,12 +105,14 @@ then cleaned up all test data.
 > check is for a good experience; the server check is what actually stops a malicious
 > request sent directly with curl/Postman past your frontend entirely.
 
-### 3.3 Optional, same session: comment as logged-in user
+### 3.3 Optional, same session: comment as logged-in user — ✅ Done 2026-08-15
 
-- [ ] Drop the "Your name (optional)" input in `ArticlePage.js`'s comment form
-- [ ] Comments from logged-in users use `req.user.username`; keep guests allowed with `'Guest'` fallback (per the existing product decision in `BACKEND_AUTH_ROADMAP.md` Step 7)
+- [x] Dropped the "Your name (optional)" input in `ArticlePage.js`'s comment form; guests now see a small "Posting as Guest — log in..." note instead
+- [x] Backend derives comment author from `req.user?.username` (never trusts client-supplied name), falling back to `'Guest'` for anonymous requests — same pattern as `authorId` on articles
 
-This one's small — worth doing in the same pass since you'll already be touching the comment form.
+**Verified live:** posted a comment as guest (no token) → `author: "Guest"`; posted as a logged-in test user → `author: "WrapupTester"`; cleaned up the test article and test user afterward. Also removed the now-unused `.article-comments__input` CSS rule.
+
+**Files touched:** `my-blog-backend/src/routes/articles.js`, `my-blog/src/services/api.js`, `my-blog/src/pages/ArticlePage.js`, `my-blog/src/pages/ArticlePage.css`
 
 ---
 
@@ -193,7 +195,7 @@ production polish for a project you're intentionally not taking further right no
 
 - [x] 3.1 — `authorId` field + ownership-safe backend routes
 - [x] 3.2 — My Articles page + Edit/Delete UI
-- [ ] 3.3 — Comment as logged-in user (optional, low effort)
+- [x] 3.3 — Comment as logged-in user (optional, low effort)
 - [ ] 4.2 — Backend deployed
 - [ ] 4.3 — Frontend deployed + CORS wired
 - [ ] 4.4 — Verified with real multi-user test pass

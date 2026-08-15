@@ -35,10 +35,13 @@ router.post('/:slug/upvote', authenticate, async (req, res, next) => {
   }
 });
 
-/** POST /api/articles/:slug/comments — body: { text, author? }. */
+/**
+ * POST /api/articles/:slug/comments — body: { text }.
+ * Author is taken from the token when logged in, 'Guest' otherwise — never from the client.
+ */
 router.post('/:slug/comments', optionalAuthenticate, async (req, res, next) => {
   try {
-    const { text, author } = req.body;
+    const { text } = req.body;
 
     if (!text || typeof text !== 'string' || !text.trim()) {
       return res.status(400).json({ error: 'Comment text is required' });
@@ -46,7 +49,7 @@ router.post('/:slug/comments', optionalAuthenticate, async (req, res, next) => {
 
     const article = await articleStore.addComment(
       req.params.slug,
-      { text, author },
+      { text, author: req.user?.username },
       req.user?.userId
     );
     if (!article) {
