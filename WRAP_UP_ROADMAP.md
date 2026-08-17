@@ -1,4 +1,4 @@
-# Wrap-Up Roadmap — Ownership Features + Going Live
+# `Wrap-Up Roadmap — Ownership Features + Going Live
 
 The final phase before this project is "done": finish the two features that need real
 ownership logic, then host it publicly so you can watch actual multiple users hit it —
@@ -202,4 +202,4 @@ production polish for a project you're intentionally not taking further right no
 
 ---
 
-*Created: 2026-08-11 — after fixing the upvote-toggle bug, scoped as the final phase before moving to a new pet project.*
+*Created: 2026-08-11 — after fixing the upvote-toggle bug, scoped as the final phase before moving to a new pet project.*`
